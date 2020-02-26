@@ -1,0 +1,24 @@
+--- tests/Database/DatabaseConnectorTest.php	2020-02-24 10:23:31.924471000 +0100
++++ tests/Database/DatabaseConnectorTest.php	2020-02-26 15:22:32.987899500 +0100
+@@ -9,6 +9,7 @@
+ use Illuminate\Database\Connectors\SqlServerConnector;
+ use Mockery as m;
+ use PDO;
++use PDOStatement;
+ use PHPUnit\Framework\TestCase;
+ 
+ class DatabaseConnectorTest extends TestCase
+@@ -32,10 +33,11 @@
+     {
+         $connector = $this->getMockBuilder(MySqlConnector::class)->setMethods(['createConnection', 'getOptions'])->getMock();
+         $connection = m::mock(PDO::class);
++        $statement = m::mock(PDOStatement::class);
+         $connector->expects($this->once())->method('getOptions')->with($this->equalTo($config))->willReturn(['options']);
+         $connector->expects($this->once())->method('createConnection')->with($this->equalTo($dsn), $this->equalTo($config), $this->equalTo(['options']))->willReturn($connection);
+-        $connection->shouldReceive('prepare')->once()->with('set names \'utf8\' collate \'utf8_unicode_ci\'')->andReturn($connection);
+-        $connection->shouldReceive('execute')->once();
++        $connection->shouldReceive('prepare')->once()->with('set names \'utf8\' collate \'utf8_unicode_ci\'')->andReturn($statement);
++        $statement->shouldReceive('execute')->once();
+         $connection->shouldReceive('exec')->zeroOrMoreTimes();
+         $result = $connector->connect($config);
+ 
