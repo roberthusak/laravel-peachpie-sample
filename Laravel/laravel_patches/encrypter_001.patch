@@ -1,0 +1,13 @@
+--- src/Illuminate/Encryption/Encrypter.php
++++ src/Illuminate/Encryption/Encrypter.php
+@@ -34,7 +34,9 @@ class Encrypter implements EncrypterContract
+      */
+     public function __construct($key, $cipher = 'AES-128-CBC')
+     {
+-        $key = (string) $key;
++        if (!is_string($key)) {     // Peachpie: explicit cast to string converts it from binary to UTF-16, not wanted here
++            $key = (string) $key;
++        }
+ 
+         if (static::supported($key, $cipher)) {
+             $this->key = $key;
